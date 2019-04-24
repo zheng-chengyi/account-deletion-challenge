@@ -11,7 +11,7 @@ import { submitToSurveyMonkeyDeleteAccount } from './SurveyService'
 import * as LoadState from './LoadState'
 import AssignOwnership from './AssignOwnership.react'
 
-export default class TerminateModalFlow extends React.Component {
+class TerminateModalFlow extends React.Component {
   static propTypes = {
     user: PropTypes.object.isRequired,
     loading: PropTypes.bool,
@@ -130,8 +130,8 @@ export default class TerminateModalFlow extends React.Component {
     }
   }
 
-  onAssignToUser = (workspace, user) => {
-    this.props.transferOwnership(user, workspace)
+  onAssignToUser = async (workspace, user) => {
+    await this.props.transferOwnership(user, workspace)
     this.assignToUser(workspace, user)
   }
 
@@ -180,7 +180,7 @@ export default class TerminateModalFlow extends React.Component {
         >
           <AssignOwnership
             user={this.props.user}
-            transferData={this.getTransferData()}
+            transferData={transferData}
             onAssignToUser={this.onAssignToUser}
           />
         </WorkspaceGroupRows>
@@ -223,3 +223,5 @@ export default class TerminateModalFlow extends React.Component {
     }
   }
 }
+
+export default TerminateModalFlow

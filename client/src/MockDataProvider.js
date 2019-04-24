@@ -87,7 +87,7 @@ export default class MockDataProvider extends React.Component {
                 transferOwnershipStatus: {
                   workspaceId: workspace.spaceId,
                   toUserId: user._id,
-                  ...LoadState.error,
+                  status: LoadState.error,
                 },
               })
             }
