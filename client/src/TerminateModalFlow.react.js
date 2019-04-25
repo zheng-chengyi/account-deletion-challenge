@@ -96,29 +96,23 @@ class TerminateModalFlow extends React.Component {
     return collection
   }
 
-  submitSurvey = () => {
+  submitSurvey = async () => {
     const feedbackRefs = this.getRefsValues(this.refs, 'feedbackForm')
     const surveyPayload = {
       feedbackRefs,
-      comment: '',
+      comment: this.state.comment,
     }
-    submitToSurveyMonkeyDeleteAccount(surveyPayload)
+    await submitToSurveyMonkeyDeleteAccount(surveyPayload)
+    this.setState({ activeModal: 'confirm' })
   }
 
   onSetNextPage = () => {
-    if (this.state.activeModal === 'transfer') {
+    const { activeModal } = this.state
+    if (activeModal === 'transfer') {
       this.setState({ activeModal: 'feedback' })
-    } else if (this.state.activeModal === 'feedback') {
-      const feedbackRefs = this.getRefsValues(this.refs, 'feedbackForm')
-      this.setState({
-        activeModal: 'confirm',
-        feedbacks: _.map(feedbackRefs, ref => ({
-          reason: ref.key,
-          comment: ref.value,
-        })),
-      })
+    } else if (activeModal === 'feedback') {
+      this.submitSurvey()
     }
-    this.submitSurvey()
   }
 
   onGoToPreviousStep = () => {
@@ -140,18 +134,21 @@ class TerminateModalFlow extends React.Component {
   }
 
   onDeleteAccount = async () => {
-    if (this.props.user.email === this.state.email) {
+    const { user, terminateAccount, terminateAccountError } = this.props
+    const { email, feedbacks } = this.state
+
+    if (user.email === email) {
       const payload = {
         transferTargets: _.map(this.getTransferData(), assign => ({
           userId: assign.toUser._id,
           spaceId: assign.workspaceId,
         })),
-        reason: this.state.feedbacks,
+        reason: feedbacks,
       }
-      this.props.terminateAccount(payload)
+      terminateAccount(payload)
     } else {
       const error = 'Invalid email'
-      this.props.terminateAccountError(error)
+      terminateAccountError(error)
     }
   }
 
@@ -160,32 +157,37 @@ class TerminateModalFlow extends React.Component {
   }
 
   renderTransferModal() {
+    const {
+      loading,
+      requiredTransferWorkspaces,
+      user,
+      deleteWorkspaces,
+    } = this.props
     const transferData = this.getTransferData()
     const totalAssigned = transferData.length
-    const totalWorkspaceRequiredTransfer = this.props.requiredTransferWorkspaces
-      .length
-    const totalWorkspaceDelete = this.props.deleteWorkspaces.length
+    const totalWorkspaceRequiredTransfer = requiredTransferWorkspaces.length
+    const totalWorkspaceDelete = deleteWorkspaces.length
     const disabledNextPage =
-      totalAssigned < totalWorkspaceRequiredTransfer || this.props.loading
+      totalAssigned < totalWorkspaceRequiredTransfer || loading
     return (
       <TransferOwnershipModal
         nextPage={this.onSetNextPage}
-        loading={this.props.loading}
+        loading={loading}
         disabledNextPage={disabledNextPage}
       >
         <WorkspaceGroupRows
-          workspaces={this.props.requiredTransferWorkspaces}
+          workspaces={requiredTransferWorkspaces}
           groupTitle="The following workspaces require ownership transfer:"
           shouldDisplay={totalWorkspaceRequiredTransfer > 0}
         >
           <AssignOwnership
-            user={this.props.user}
+            user={user}
             transferData={transferData}
             onAssignToUser={this.onAssignToUser}
           />
         </WorkspaceGroupRows>
         <WorkspaceGroupRows
-          workspaces={this.props.deleteWorkspaces}
+          workspaces={deleteWorkspaces}
           groupTitle="The following workspaces will be deleted:"
           shouldDisplay={totalWorkspaceDelete > 0}
         />
@@ -210,14 +212,18 @@ class TerminateModalFlow extends React.Component {
           />
         )
       case 'confirm':
+        const {
+          terminateAccountStatus,
+          resetTerminateAccountStatus,
+        } = this.props
         return (
           <ConfirmEmailModal
             onClickToDelete={this.onDeleteAccount}
             onBackButton={this.onGoToPreviousStep}
             email={this.state.email}
             onTypeEmail={this.onTypeEmail}
-            terminateAccountStatus={this.props.terminateAccountStatus}
-            resetTerminateAccountStatus={this.props.resetTerminateAccountStatus}
+            terminateAccountStatus={terminateAccountStatus}
+            resetTerminateAccountStatus={resetTerminateAccountStatus}
           />
         )
     }
