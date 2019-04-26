@@ -2,7 +2,7 @@ import _ from 'lodash'
 import PropTypes from 'prop-types'
 import React from 'react'
 
-import { isLoading } from './LoadState'
+import { isLoading } from './../../LoadState'
 
 class ConfirmEmailModal extends React.PureComponent {
   static propTypes = {
@@ -22,7 +22,9 @@ class ConfirmEmailModal extends React.PureComponent {
 
   getStateButton = () => {
     if (isLoading(this.props.terminateAccountStatus)) return true
-    if (this.state.markedConsequences && this.props.email) return false
+    const { email } = this.props
+    const { markedConsequences } = this.state
+    if (markedConsequences && email) return false
     return true
   }
 
