@@ -21,7 +21,6 @@ class ConfirmEmailModal extends React.PureComponent {
   }
 
   getStateButton = () => {
-    if (isLoading(this.props.terminateAccountStatus)) return true
     const { email } = this.props
     const { markedConsequences } = this.state
     if (markedConsequences && email) return false
