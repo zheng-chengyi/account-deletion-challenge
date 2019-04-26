@@ -77,7 +77,6 @@ class TerminateModalFlow extends React.Component {
         {
           workspaceId: workspace.spaceId,
           toUser: user,
-          ...LoadState.pending,
         },
       ],
     })
@@ -126,7 +125,8 @@ class TerminateModalFlow extends React.Component {
 
   onAssignToUser = async (workspace, user) => {
     await this.props.transferOwnership(user, workspace)
-    this.assignToUser(workspace, user)
+    this.props.transferOwnershipStatus.status === LoadState.completed.status &&
+      this.assignToUser(workspace, user)
   }
 
   onChangeComment = e => {
@@ -162,6 +162,7 @@ class TerminateModalFlow extends React.Component {
       requiredTransferWorkspaces,
       user,
       deleteWorkspaces,
+      transferOwnershipStatus,
     } = this.props
     const transferData = this.getTransferData()
     const totalAssigned = transferData.length
@@ -184,6 +185,7 @@ class TerminateModalFlow extends React.Component {
             user={user}
             transferData={transferData}
             onAssignToUser={this.onAssignToUser}
+            transferOwnershipStatus={transferOwnershipStatus}
           />
         </WorkspaceGroupRows>
         <WorkspaceGroupRows

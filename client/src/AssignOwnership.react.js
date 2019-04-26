@@ -10,6 +10,7 @@ class AssignOwnership extends React.Component {
     workspace: PropTypes.object,
     transferData: PropTypes.array,
     onAssignToUser: PropTypes.func,
+    transferOwnershipStatus: PropTypes.object,
   }
 
   getAddedMember() {
@@ -28,6 +29,17 @@ class AssignOwnership extends React.Component {
     this.props.onAssignToUser(this.props.workspace, user)
   }
 
+  renderError() {
+    const user = this.props.workspace.transferableMembers.filter(
+      user => user._id === this.props.transferOwnershipStatus.toUserId
+    )
+    return user.length > 0 ? (
+      <span style={{ color: 'red' }}>{`Unable to assign to ${
+        user[0].name
+      }`}</span>
+    ) : null
+  }
+
   render() {
     return (
       <div style={{ textDecoration: 'underline', cursor: 'pointer' }}>
@@ -43,6 +55,8 @@ class AssignOwnership extends React.Component {
             </option>
           ))}
         </select>
+        {this.props.transferOwnershipStatus.status === 'error' &&
+          this.renderError()}
       </div>
     )
   }

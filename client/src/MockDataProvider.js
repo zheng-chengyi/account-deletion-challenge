@@ -49,50 +49,46 @@ export default class MockDataProvider extends React.Component {
         ...LoadState.pending,
       },
 
-      transferOwnership: (user, workspace) => {
-        this.setState(
-          {
-            transferOwnershipStatus: {
-              workspaceId: workspace.spaceId,
-              toUserId: this.state.user._id,
-              ...LoadState.loading,
-            },
+      transferOwnership: async (user, workspace) => {
+        this.setState({
+          transferOwnershipStatus: {
+            workspaceId: workspace.spaceId,
+            toUserId: this.state.user._id,
+            ...LoadState.loading,
           },
-          async () => {
-            const response = await window.fetch(
-              'https://us-central1-tw-account-deletion-challenge.cloudfunctions.net/checkOwnership',
-              {
-                method: 'POST',
-                mode: 'cors',
-                headers: {
-                  'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({
-                  workspaceId: workspace.spaceId,
-                  fromUserId: this.state.user._id,
-                  toUserId: user._id,
-                }),
-              }
-            )
-            if (response.status === 200) {
-              this.setState({
-                transferOwnershipStatus: {
-                  workspaceId: workspace.spaceId,
-                  toUserId: user._id,
-                  ...LoadState.completed,
-                },
-              })
-            } else {
-              this.setState({
-                transferOwnershipStatus: {
-                  workspaceId: workspace.spaceId,
-                  toUserId: user._id,
-                  status: LoadState.error,
-                },
-              })
-            }
+        })
+        const response = await window.fetch(
+          'https://us-central1-tw-account-deletion-challenge.cloudfunctions.net/checkOwnership',
+          {
+            method: 'POST',
+            mode: 'cors',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+              workspaceId: workspace.spaceId,
+              fromUserId: this.state.user._id,
+              toUserId: user._id,
+            }),
           }
         )
+        if (response.status === 200) {
+          this.setState({
+            transferOwnershipStatus: {
+              workspaceId: workspace.spaceId,
+              toUserId: user._id,
+              ...LoadState.completed,
+            },
+          })
+        } else {
+          this.setState({
+            transferOwnershipStatus: {
+              workspaceId: workspace.spaceId,
+              toUserId: user._id,
+              status: LoadState.error,
+            },
+          })
+        }
       },
 
       terminateAccount: async payload => {
