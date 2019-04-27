@@ -1,4 +1,5 @@
 import _ from 'lodash'
+import { API, RequestHelper } from '../../services'
 
 const CANCEL_WORKSPACE = {
   PAGE_ID: '48414504',
@@ -79,18 +80,9 @@ export const submitToSurveyMonkeyDeleteAccount = async ({
   comment,
 }) => {
   const surveyPayload = getSurveyPayload(feedbackRefs, comment)
-
-  const response = await window.fetch(
-    'https://us-central1-tw-account-deletion-challenge.cloudfunctions.net/submitSurvey',
-    {
-      method: 'POST',
-      mode: 'cors',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(surveyPayload),
-    }
-  )
+  const request = new RequestHelper()
+  const url = API.submitSurvey
+  const response = await request.post(url, surveyPayload)
   if (response.status !== 200) {
     throw new Error('Error submitting SurveyMonkey')
   }
