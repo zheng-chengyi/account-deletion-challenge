@@ -1,6 +1,6 @@
 import React from "react"
 import { shallow } from "enzyme"
-import TransferOwnershipModal from "./../modules/transfer/TransferOwnershipModal.react"
+import TransferOwnershipModal from "../../../modules/transfer/TransferOwnershipModal.react"
 
 describe("TransferOwnershipModal", () => {
 
