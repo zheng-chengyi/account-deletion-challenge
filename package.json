@@ -2,22 +2,33 @@
   "name": "account-deletion-challenge",
   "license": "MIT",
   "scripts": {
-    "serve": "cross-env NODE_ENV=development parcel client/src/index.html --out-dir out"
+    "serve": "cross-env NODE_ENV=development parcel client/src/index.html --out-dir out",
+    "test": "jest"
   },
   "devDependencies": {
+    "@babel/core": "^7.4.4",
+    "@babel/plugin-proposal-class-properties": "^7.4.4",
+    "@babel/plugin-transform-runtime": "^7.4.4",
+    "@babel/preset-env": "^7.4.4",
+    "@babel/preset-react": "^7.0.0",
     "@types/autoprefixer": "6.7.3",
     "@types/lodash": "4.14.116",
     "@types/parcel-bundler": "1.10.0",
     "@types/react": "16.4.16",
     "@types/react-dom": "16.0.9",
-    "babel-plugin-transform-class-properties": "^6.24.1",
-    "cross-env": "5.1.4"
+    "babel-jest": "^24.7.1",
+    "cross-env": "5.1.4",
+    "enzyme": "^3.9.0",
+    "enzyme-adapter-react-15": "^1.4.0",
+    "enzyme-to-json": "^3.3.5",
+    "jest": "^24.7.1",
+    "react-test-renderer": "^15.5.4"
   },
   "dependencies": {
     "autoprefixer": "8.2.0",
     "babel-preset-react-app": "3.1.1",
-    "lodash": "4.17.5",
-    "parcel-bundler": "~1.7.0",
+    "lodash": "^4.17.11",
+    "parcel-bundler": "^1.12.3",
     "react": "^15.0.0",
     "react-dom": "^15.0.0"
   },
@@ -34,5 +45,19 @@
         "flexbox": "no-2009"
       }
     }
+  },
+  "jest": {
+    "transform": {
+      "^.+\\.js$": "babel-jest"
+    },
+    "setupFilesAfterEnv": [
+      "./client/src/setupTests.js"
+    ],
+    "snapshotSerializers": [
+      "enzyme-to-json/serializer"
+    ],
+    "moduleFileExtensions": [
+      "js"
+    ]
   }
 }
